@@ -37,7 +37,10 @@ public class PlayerController : MonoBehaviour
         Physics.Raycast(cursorRay, out hit, Mathf.Infinity);
         //Debug.Log(hit.point);
         crosshair.position = hit.point;
-        tower.LookAt(crosshair.position);
+        Quaternion targetTowerRotation = Quaternion.LookRotation(crosshair.position - transform.position, Vector3.forward);
+        targetTowerRotation.x = 0;
+        targetTowerRotation.z = 0;
+        tower.rotation = Quaternion.Slerp(tower.rotation, targetTowerRotation, Time.deltaTime * 8);
 
     }
 
