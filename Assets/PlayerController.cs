@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
 {
     public float engineForce, rotationForce;
     private bool isGrounded;
-    private Transform tank, crosshair, tower;
+    private Transform tank, crosshair, tower, canon;
     private Dictionary<String, Transform> wheels;
     Vector2 inputVector;
     Rigidbody rb;
@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
         tank = this.transform.Find("Tank");
         crosshair = this.transform.Find("Crosshair");
         tower = tank.Find("Tower");
+        canon = tower.Find("Canon");
         wheels = new Dictionary<String, Transform>();
         wheels.Add("FL", tank.Find("FLWheel"));
         wheels.Add("FR", tank.Find("FRWheel"));
@@ -34,13 +35,23 @@ public class PlayerController : MonoBehaviour
         
         Vector3 mousePositionOnScreen = Mouse.current.position.ReadValue();
         Ray cursorRay= Camera.main.ScreenPointToRay(mousePositionOnScreen);
-        Physics.Raycast(cursorRay, out hit, Mathf.Infinity);
+        Physics.Raycast(cursorRay, out hit, 100);
         //Debug.Log(hit.point);
-        crosshair.position = hit.point;
-        Quaternion targetTowerRotation = Quaternion.LookRotation(crosshair.position - transform.position, Vector3.forward);
-        targetTowerRotation.x = 0;
-        targetTowerRotation.z = 0;
-        tower.rotation = Quaternion.Slerp(tower.rotation, targetTowerRotation, Time.deltaTime * 8);
+        if(hit.collider != null)
+        {
+            crosshair.position = hit.point;
+            Quaternion targetTowerRotation = Quaternion.LookRotation(crosshair.position - transform.position, Vector3.forward);
+            targetTowerRotation.x = 0;
+            targetTowerRotation.z = 0;
+            tower.rotation = Quaternion.Slerp(tower.rotation, targetTowerRotation, Time.deltaTime * 8);
+            /*
+            Quaternion targetCanonRotation = Quaternion.LookRotation(crosshair.position - transform.position, Vector3.up);
+            targetCanonRotation.y = 0;
+            targetCanonRotation.z = 0;
+            Debug.Log(targetCanonRotation);
+            canon.rotation = Quaternion.Slerp(canon.rotation, targetCanonRotation, Time.deltaTime * 8);
+            */
+        }
 
     }
 
